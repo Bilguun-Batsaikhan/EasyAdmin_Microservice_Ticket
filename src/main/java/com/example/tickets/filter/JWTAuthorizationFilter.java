@@ -1,0 +1,91 @@
+package com.example.tickets.filter;
+
+import com.example.tickets.enumeration.HttpResponseEnum;
+import com.example.tickets.enumeration.UserRoleEnum;
+import com.example.tickets.exception.FailureException;
+import com.example.tickets.dto.HttpResponse;
+import com.example.tickets.requestcontext.RequestContext;
+import com.example.tickets.service.JWTService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletResponse;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+@Component
+@Order(1)
+public class JWTAuthorizationFilter extends OncePerRequestFilter {
+
+    private final JWTService jwtService;
+
+    private final RequestContext requestContext;
+
+    public JWTAuthorizationFilter(JWTService jwtService, RequestContext requestContext) {
+        this.jwtService = jwtService;
+
+        this.requestContext = requestContext;
+    }
+
+
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // If no valid Authorization header, block the request
+            returnCustomResponse(response, HttpStatus.UNAUTHORIZED, HttpResponseEnum.INVALID_ACCESS_TOKEN);
+            return;
+        }
+
+        String accessToken = authHeader.substring(7); // Extract the token
+
+        try {
+            jwtService.validateAccessToken(accessToken); // Validate token
+            String role = jwtService.getClaimFromAccessToken(accessToken, "role", String.class);
+            requestContext.setRole(UserRoleEnum.valueOf(role));
+            requestContext.setAccessToken(accessToken);
+        } catch (FailureException e) {
+            if (isTokenRefreshRequest(e, request)) {
+                filterChain.doFilter(request, response);
+            } else {
+                returnCustomResponse(response, e.getHttpResponseEnum().getHttpStatus(), e.getHttpResponseEnum());
+            }
+            return;
+        }
+
+        // If token is valid, proceed to the next filter
+        filterChain.doFilter(request, response);
+    }
+
+    private boolean isTokenRefreshRequest(FailureException e, HttpServletRequest request) {
+        return e.getHttpResponseEnum().equals(HttpResponseEnum.EXPIRED_ACCESS_TOKEN)
+                && "/auth/login/refresh".equals(request.getRequestURI());
+    }
+
+    private void returnCustomResponse(ServletResponse response, HttpStatus httpStatus, HttpResponseEnum HttpResponseEnum) throws IOException {
+        HttpResponse customObjectResponse = new HttpResponse(HttpResponseEnum); //HttpResponse mia
+        byte[] responseToSend = restResponseBytes(customObjectResponse, MediaType.APPLICATION_JSON);
+        ((HttpServletResponse) response).setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        ((HttpServletResponse) response).setStatus(httpStatus.value());
+        response.getOutputStream().write(responseToSend);
+    }
+
+    //This method serializes the HttpResponse object into a byte array
+    private byte[] restResponseBytes(HttpResponse response, MediaType mediaType) throws IOException {
+        ObjectMapper mapper = mediaType == MediaType.APPLICATION_JSON ? new ObjectMapper() : new XmlMapper();
+        String serialized = mapper.writeValueAsString(response);
+        return serialized.getBytes();
+    }
+}
+
