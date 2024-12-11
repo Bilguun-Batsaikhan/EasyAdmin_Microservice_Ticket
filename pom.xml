@@ -8,10 +8,10 @@
 		<version>3.4.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>table</artifactId>
+	<groupId>com.certimeter</groupId>
+	<artifactId>easyadmin-tickets</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>table</name>
+	<name>tickets</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
