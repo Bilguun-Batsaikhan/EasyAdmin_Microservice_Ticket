@@ -53,6 +53,7 @@ public class TicketController {
         Ticket createdTicket = ticketService.createTicket(ticket);
         return new ResponseEntity<>(createdTicket, HttpStatus.CREATED);
     }
+
     @PatchMapping("/{id}")
     public ResponseEntity<Ticket> updateTicket(@Valid @PathVariable Long id, @RequestBody Map<String, Object> updates) {
         EnumSet<UserRoleEnum> authorizedRoles = EnumSet.of(UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SYSTEM_ADMIN);

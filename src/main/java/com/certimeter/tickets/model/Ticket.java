@@ -68,8 +68,4 @@ public class Ticket {
     @Column(name = "last_updated_at", nullable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Timestamp lastUpdatedAt;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "progress_stage", nullable = false, columnDefinition = "ENUM('NEW', 'IN_PROGRESS', 'RESOLVED') DEFAULT 'NEW'")
-    private ProgressStage progressStage = ProgressStage.NEW;
 }
