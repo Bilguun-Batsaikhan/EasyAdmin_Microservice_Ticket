@@ -16,7 +16,7 @@ public class TicketService {
     public TicketService(TicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
     }
-
+    //TODO: Implement authorization logic then based on the user role, return the appropriate tickets
     public TicketResPagination getAllTickets(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Ticket> pagedTickets = ticketRepository.findAll(pageable);
@@ -32,4 +32,6 @@ public class TicketService {
 
         return ticketResPagination;
     }
+    //TODO: Implement POST method to open a ticket
+    //TODO: When opening a ticket, check if another ticket is already open for the asset
 }
