@@ -4,12 +4,69 @@ import com.certimeter.tickets.model.Ticket;
 import lombok.Data;
 
 import java.util.List;
+
 @Data
 public class TicketResPagination {
-    private List<Ticket> data;
     private int pageNo;
     private int pageSize;
     private long totalElements;
     private int totalPages;
     private boolean last;
+    private List<Ticket> data;
+
+    private TicketResPagination(Builder builder) {
+        this.pageNo = builder.pageNo;
+        this.pageSize = builder.pageSize;
+        this.totalElements = builder.totalElements;
+        this.totalPages = builder.totalPages;
+        this.last = builder.last;
+        this.data = builder.data;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private int pageNo;
+        private int pageSize;
+        private long totalElements;
+        private int totalPages;
+        private boolean last;
+        private List<Ticket> data;
+
+        public Builder pageNo(int pageNo) {
+            this.pageNo = pageNo;
+            return this;
+        }
+
+        public Builder pageSize(int pageSize) {
+            this.pageSize = pageSize;
+            return this;
+        }
+
+        public Builder totalElements(long totalElements) {
+            this.totalElements = totalElements;
+            return this;
+        }
+
+        public Builder totalPages(int totalPages) {
+            this.totalPages = totalPages;
+            return this;
+        }
+
+        public Builder last(boolean last) {
+            this.last = last;
+            return this;
+        }
+
+        public Builder data(List<Ticket> data) {
+            this.data = data;
+            return this;
+        }
+
+        public TicketResPagination build() {
+            return new TicketResPagination(this);
+        }
+    }
 }

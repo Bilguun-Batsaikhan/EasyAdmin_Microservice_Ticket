@@ -3,7 +3,6 @@ package com.certimeter.tickets.model;
 import com.certimeter.tickets.enumeration.Priority;
 import com.certimeter.tickets.enumeration.Status;
 import com.certimeter.tickets.enumeration.TicketType;
-import com.certimeter.tickets.enumeration.ProgressStage;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -68,4 +67,11 @@ public class Ticket {
     @Column(name = "last_updated_at", nullable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Timestamp lastUpdatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "asset_id", insertable = false, updatable = false)
+    private Asset asset;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
 }

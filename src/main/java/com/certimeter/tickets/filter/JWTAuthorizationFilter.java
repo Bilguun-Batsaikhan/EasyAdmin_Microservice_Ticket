@@ -13,6 +13,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +31,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private final RequestContext requestContext;
 
+    private static final Logger LOG = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+
     public JWTAuthorizationFilter(JWTService jwtService, RequestContext requestContext) {
         this.jwtService = jwtService;
 
@@ -40,6 +44,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
+        LOG.info("--------- START - GET {}?{} ------", request.getRequestURI(), request.getQueryString());
+        LOG.info("Endpoint: {}", request.getRequestURI());
+        LOG.info("Method: {}", request.getMethod());
+        LOG.info("Query string: {}", request.getQueryString());
+
 
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
