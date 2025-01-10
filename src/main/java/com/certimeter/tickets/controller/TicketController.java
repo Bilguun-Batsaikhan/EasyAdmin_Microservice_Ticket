@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -28,19 +30,94 @@ public class TicketController {
         this.requestContext = requestContext;
         this.authorizationService = authorizationService;
     }
+
     //--------------------------//
     //CRUD operations for Ticket//
     //--------------------------//
     @GetMapping
-    public ResponseEntity<TicketResPagination> getAllTickets(@RequestParam(value = "page", defaultValue = "0", required = false) int pageNo,
-                                                             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize) {
+    public ResponseEntity<TicketResPagination> getAllTickets(
+            @RequestParam Optional<String> modelName,
+            @RequestParam Optional<String> modelNameMatchMode,
+            @RequestParam Optional<String> username,
+            @RequestParam Optional<String> usernameMatchMode,
+            @RequestParam Optional<String> title,
+            @RequestParam Optional<String> titleMatchMode,
+            @RequestParam Optional<String> context,
+            @RequestParam Optional<String> contextMatchMode,
+            @RequestParam Optional<String> ticketType,
+            @RequestParam Optional<String> ticketTypeMatchMode,
+            @RequestParam Optional<String> status,
+            @RequestParam Optional<String> statusMatchMode,
+            @RequestParam Optional<String> priority,
+            @RequestParam Optional<String> priorityMatchMode,
+            @RequestParam Optional<String> issuedAt,
+            @RequestParam Optional<String> issuedAtMatchMode,
+            @RequestParam Optional<String> closedAt,
+            @RequestParam Optional<String> closedAtMatchMode,
+            @RequestParam Optional<String> resolutionDetails,
+            @RequestParam Optional<String> resolutionDetailsMatchMode,
+            @RequestParam Optional<String> lastUpdatedAt,
+            @RequestParam Optional<String> lastUpdatedAtMatchMode,
+            @RequestParam(value = "page", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize) {
+
         EnumSet<UserRoleEnum> authorizedRoles = EnumSet.of(UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SYSTEM_ADMIN);
+
         if (authorizationService.isAuthorized(requestContext, authorizedRoles)) {
-            return new ResponseEntity<>(ticketService.getAllTickets(pageNo, pageSize), HttpStatus.OK);
+            return new ResponseEntity<>(ticketService.getAllTickets(
+                    pageNo,
+                    pageSize,
+                    modelName,
+                    modelNameMatchMode,
+                    username,
+                    usernameMatchMode,
+                    title,
+                    titleMatchMode,
+                    context,
+                    contextMatchMode,
+                    ticketType,
+                    ticketTypeMatchMode,
+                    status,
+                    statusMatchMode,
+                    priority,
+                    priorityMatchMode,
+                    issuedAt,
+                    issuedAtMatchMode,
+                    closedAt,
+                    closedAtMatchMode,
+                    resolutionDetails,
+                    resolutionDetailsMatchMode,
+                    lastUpdatedAt,
+                    lastUpdatedAtMatchMode
+            ), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(ticketService.getAllUserTickets(requestContext.getUserId(), pageNo, pageSize), HttpStatus.OK);
+            return new ResponseEntity<>(ticketService.getAllUserTickets(requestContext.getUserId(), pageNo,
+                    pageSize,
+                    modelName,
+                    modelNameMatchMode,
+                    username,
+                    usernameMatchMode,
+                    title,
+                    titleMatchMode,
+                    context,
+                    contextMatchMode,
+                    ticketType,
+                    ticketTypeMatchMode,
+                    status,
+                    statusMatchMode,
+                    priority,
+                    priorityMatchMode,
+                    issuedAt,
+                    issuedAtMatchMode,
+                    closedAt,
+                    closedAtMatchMode,
+                    resolutionDetails,
+                    resolutionDetailsMatchMode,
+                    lastUpdatedAt,
+                    lastUpdatedAtMatchMode), HttpStatus.OK);
         }
     }
+
     @PostMapping
     public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket) {
         EnumSet<UserRoleEnum> authorizedRoles = EnumSet.of(UserRoleEnum.USER);
