@@ -45,7 +45,6 @@ public class Ticket {
     @Column(name = "ticket_type", nullable = false)
     private TicketType ticketType;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
@@ -53,8 +52,7 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
     private Priority priority = Priority.MEDIUM;
-
-    @NotNull
+    
     @Column(name = "issued_at", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp issuedAt;
 
