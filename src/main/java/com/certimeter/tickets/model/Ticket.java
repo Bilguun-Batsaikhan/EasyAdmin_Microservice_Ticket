@@ -52,7 +52,7 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
     private Priority priority = Priority.MEDIUM;
-    
+
     @Column(name = "issued_at", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp issuedAt;
 
